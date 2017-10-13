@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingCartTest", "ShoppingCartTest\ShoppingCartTest.csproj", "{300FAF02-4CF7-4D47-8BD0-7CB3FD580E81}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PublishScripts", "PublishScripts", "{B94BDE5B-03CB-4517-B355-777DC888CF25}"
+	ProjectSection(SolutionItems) = preProject
+		PublishScripts\AzureVMPublishModule.psm1 = PublishScripts\AzureVMPublishModule.psm1
+		PublishScripts\Publish-WebApplicationVM.ps1 = PublishScripts\Publish-WebApplicationVM.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configurations", "Configurations", "{A3F58511-BB4F-4CC7-80E7-38B53E3D03FB}"
+	ProjectSection(SolutionItems) = preProject
+		PublishScripts\Configurations\ShoppingCartTest-VM-dev.json = PublishScripts\Configurations\ShoppingCartTest-VM-dev.json
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{300FAF02-4CF7-4D47-8BD0-7CB3FD580E81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{300FAF02-4CF7-4D47-8BD0-7CB3FD580E81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{300FAF02-4CF7-4D47-8BD0-7CB3FD580E81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{300FAF02-4CF7-4D47-8BD0-7CB3FD580E81}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A3F58511-BB4F-4CC7-80E7-38B53E3D03FB} = {B94BDE5B-03CB-4517-B355-777DC888CF25}
+	EndGlobalSection
+EndGlobal

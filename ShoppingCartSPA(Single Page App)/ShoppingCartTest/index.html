@@ -1,0 +1,262 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+    <link href="css/bootstrap.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="css/style.css" rel="stylesheet" type="text/css" media="all" />
+    <link href='http://fonts.googleapis.com/css?family=Raleway:400,200,600,800,700,500,300,100,900' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Arimo:400,700,700italic' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="css/component.css" />
+
+    <!--<link rel="stylesheet" type="text/css" href="Content/bootstrap.min.css" />-->
+    <script src="Scripts/jquery-1.10.2.min.js"></script>
+    <script src="Scripts/bootstrap.min.js"></script>
+    <script src="Scripts/respond.min.js"></script>
+
+    <script>
+        
+        function CountItems() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("Get", "api/CountItems");
+            xhr.onreadystatechange = function () {
+                if (xhr.response && xhr.response != "") {
+                    $(".label-info").text(xhr.response);
+                }
+            };
+            xhr.send(null);
+        }
+
+        function GetProducts() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("Get", "api/GetProducts");
+
+            xhr.onload = function () {
+                if (xhr.response && xhr.response != "") {
+                    var products = JSON.parse(xhr.response);
+
+                    var ProductContainer = document.getElementById("ProductContainer");
+                    ProductContainer.innerHTML = "";
+
+                    for (var i = 0; i < products.length; i++) {
+                        var ProductDiv = document.getElementById("ProductDiv").innerHTML;
+                        ProductDiv = ProductDiv.replace("{{Name}}", products[i].Name);
+                        ProductDiv = ProductDiv.replace("{{Price}}", products[i].Price);
+                        ProductDiv = ProductDiv.replace("{{Description}}", products[i].Description);
+                        ProductDiv = ProductDiv.replace("{{Image}}", products[i].ImageUrl);
+                        ProductDiv = ProductDiv.replace("{{Id}}", products[i].Id);
+                        ProductDiv = ProductDiv.replace("{{Id}}", products[i].Id);
+                        ProductContainer.innerHTML += ProductDiv;
+                    }
+                }
+            };
+            xhr.send(null);
+            CountItems();
+        }
+
+        function AddToCart(Id) {
+            var xhr = new XMLHttpRequest();
+                xhr.open("Get", "api/AddToCart/" + Id);
+                xhr.onload = function () {
+                    if (xhr.response && xhr.response!="") {
+                        $("#btnAddToCart"+Id).removeClass("btn-warning").addClass("btn-success").children("btnText").text("Added");
+                        $(".label-info").text(xhr.response);
+                    }
+                };
+                xhr.send(null);
+            }
+
+        //const abc = (value) => console.log(value);
+
+        function GetCart() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("Get", "api/GetCart");
+            $("CartItems").html = "";
+            xhr.onload = function () {
+                if (xhr.response && xhr.response != "") {
+                    var data = JSON.parse(xhr.response);
+                    var CartItems = document.getElementById("CartItems");
+                    CartItems.innerHTML = '';
+                    var items = data.Items;
+                    var grandTotal = 0;
+                    items.forEach(function (val, key) {
+                        var item = val.Product;
+                        var qty = val.Count;
+                        var subTotal = qty * item.Price;
+                        grandTotal += subTotal;
+                        var CartDiv = document.getElementById("CartDiv").innerHTML;
+                        CartDiv = CartDiv.replace("{{Id}}", item.Id);
+                        CartDiv = CartDiv.replace("{{Name}}", item.Name);
+                        CartDiv = CartDiv.replace("{{Price}}", item.Price);
+                        CartDiv = CartDiv.replace("{{Image}}", item.ImageUrl);
+                        CartDiv = CartDiv.replace("{{Qty}}", qty);
+                        CartDiv = CartDiv.replace("{{total}}", subTotal);
+                        CartItems.innerHTML += CartDiv;
+                    })
+                    document.getElementById("grandTotal").innerHTML = grandTotal;
+                }
+            };
+            xhr.send(null);
+            $('#ProductContainer').fadeOut('slow', function () {
+                $('#CartContainer').fadeIn('slow');
+                $(".homeLink").parent().removeClass("active");
+                $(".cartLink").parent().addClass("active");
+            });
+        }
+
+        function GetHome() {
+
+                $('#CartContainer').fadeOut('slow', function () {
+                    $(".cartLink").parent().removeClass("active");
+                    $(".homeLink").parent().addClass("active");
+                    $('#ProductContainer').fadeIn('slow');
+                });
+
+        }
+
+    </script>
+
+    <script type="text/html" id="ProductDiv">
+        <div class="col-md-4">
+            <div class="thumbnail">
+                <a href="single.html">
+                    <div class="more-product-info"><span>NEW</span></div>
+                    <div class="product-img b-link-stripe b-animate-go  thickbox">
+                        <img src="images/{{Image}}" class="img-thumbnail" style="width:100%; height:250px;" alt="" />
+                    </div>
+                </a>
+                <div class="product-info simpleCart_shelfItem">
+                    <div class="product-info-cust">
+                        <h4>{{Name}}</h4>
+                        <h5>{{Description}}</h5>
+                        <span class="item_price">${{Price}}</span>
+                        <br />
+                        <button type="submit" class="btn btn-warning btnProduct" onclick="AddToCart({{Id}})" id="btnAddToCart{{Id}}"><span class="glyphicon glyphicon-shopping-cart"></span> <span class="btnText">Add To Cart</span></button>
+                    </div>
+                    <div class="clearfix"> </div>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <script type="text/html" id="CartDiv">
+
+        <tr data-id="{{Id}}">
+            <td class="col-sm-8 col-md-6">
+                <div class="media">
+                    <a class="thumbnail pull-left" href="#"> <img class="media-object" src="images/{{Image}}" style="width: 72px; height: 72px;"> </a>
+                    <div class="media-body">
+                        <h4 class="media-heading"><a href="#">{{Name}}</a></h4>
+                        <!--<h5 class="media-heading">  Category <a href="#">Brand name</a></h5>-->
+                        <span>Status: </span><span class="text-success"><strong>In Stock</strong></span>
+                    </div>
+                </div>
+            </td>
+            <td class="col-sm-1 col-md-1" style="text-align: center">
+                <label class="form-control">{{Qty}}</label>
+            </td>
+            <td class="col-sm-1 col-md-1 text-center"><strong>{{Price}}</strong></td>
+            <td class="col-sm-1 col-md-1 text-center"><strong>{{total}}</strong></td>
+            <td class="col-sm-1 col-md-1">
+                <button type="button" class="btn btn-danger btnRemove">
+                    <span class="glyphicon glyphicon-remove"></span> Remove
+                </button>
+            </td>
+        </tr>
+
+    </script>
+
+</head>
+
+<body onload="GetProducts()">
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#"><span style="color:white">FAMOUS</span> SHOPPING CENTRE</a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="JavaScipt:void(0)" class="homeLink" id="homeLink" onclick="GetHome()">Home</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="JavaScipt:void(0)" class="cartLink" id="cartLink" onclick="GetCart()">Cart: <span class="label label-info">0</span> items <span class="glyphicon glyphicon-shopping-cart"></span></a></li>
+                </ul>
+            </div>
+        </div> 
+    </nav>
+
+        <div class="container">
+            <div class="tab-grids Product" id="ProductContainer">
+
+            </div>
+        </div>
+
+
+    <div class="CartContainer" id="CartContainer" hidden="">
+
+        <div class="cart">
+            <div class="container">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th class="text-center">Price</th>
+                            <th class="text-center">Total</th>
+                            <th> </th>
+                        </tr>
+                    </thead>
+                    <tbody id="CartItems"></tbody>
+                </table>
+                <table class="pull-right">
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td><h3>Total</h3></td>
+                        <td class="text-right"><h3><strong id="grandTotal"></strong></h3></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            <button type="button" class="btn btn-default">
+                                <span class="glyphicon glyphicon-shopping-cart"></span> Continue Shopping
+                            </button>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-success">
+                                Checkout <span class="glyphicon glyphicon-play"></span>
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
+        </div>
+
+    </div>
+
+         
+            <!-- tabs-box -->
+            <!-- Comman-js-files -->
+
+
+
+
+        
+            <!-- Comman-js-files -->
+
+
+</body>
+
+
+
+</html>
